@@ -7,10 +7,10 @@
 
   outputs = { self, nixpkgs, ... }: {
     nixosConfigurations = {
-      thinkpad = nixpkgs.lib.nixosSystem {
+      t440p = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          ./hosts/thinkpad/configuration.nix
+          ./hosts/t440p/configuration.nix
         ];
       };
     };

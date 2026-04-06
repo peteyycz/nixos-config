@@ -25,7 +25,7 @@
   boot.initrd.verbose = false;
   boot.plymouth.enable = true;
 
-  networking.hostName = "peteyycz-thinkpad-nixos";
+  networking.hostName = "t440p";
 
   networking.networkmanager.enable = true;
 
@@ -49,6 +49,7 @@
 
   services.libinput.enable = true;
 
+  programs.nix-ld.enable = true;
   programs.fish.enable = true;
   users.users.peteyycz = {
     isNormalUser = true;

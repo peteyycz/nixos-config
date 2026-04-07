@@ -649,6 +649,14 @@ in
     };
   };
 
+  services.swayidle = {
+    enable = true;
+    events = [
+      { event = "lock"; command = "${pkgs.swaylock}/bin/swaylock -f"; }
+      { event = "before-sleep"; command = "${pkgs.swaylock}/bin/swaylock -f"; }
+    ];
+  };
+
   programs.foot = {
     enable = true;
     settings = {

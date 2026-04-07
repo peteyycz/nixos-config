@@ -9,12 +9,12 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }: {
-    nixosConfigurations = {
-      t440p = nixpkgs.lib.nixosSystem {
+  outputs = { self, nixpkgs, home-manager, ... }:
+    let
+      mkHost = name: nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          ./hosts/t440p/configuration.nix
+          ./hosts/${name}/configuration.nix
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
@@ -23,6 +23,11 @@
           }
         ];
       };
+    in
+    {
+      nixosConfigurations = {
+        t440p = mkHost "t440p";
+        t14g2 = mkHost "t14g2";
+      };
     };
-  };
 }

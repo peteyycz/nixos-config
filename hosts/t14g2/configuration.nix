@@ -6,7 +6,7 @@
     ../../modules/common.nix
   ];
 
-  networking.hostName = "t440p";
+  networking.hostName = "t14g2";
 
   boot.initrd.kernelModules = [ "i915" ];
 

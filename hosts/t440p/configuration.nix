@@ -11,15 +11,16 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.consoleMode = "max";
   boot.loader.efi.canTouchEfiVariables = true;
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.initrd.kernelModules = [ "i915" ];
   boot.kernelParams = [
     "quiet"
     "loglevel=3"
     "rd.systemd.show_status=auto"
     "rd.udev.log_level=3"
-    "video=1920x1080@60"
   ];
   boot.consoleLogLevel = 0;
   boot.initrd.verbose = false;
@@ -67,11 +68,7 @@
     stow
     git
     wl-clipboard
-    tmux
     google-chrome
-
-    nerd-fonts.victor-mono
-    nerd-fonts.symbols-only
   ];
 
   programs._1password.enable = true;

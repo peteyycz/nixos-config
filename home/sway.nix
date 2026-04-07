@@ -663,7 +663,7 @@ in
       key-bindings = {
         show-urls-launch = "Control+Shift+o";
       };
-      colors = {
+      colors-dark = {
         alpha = "0.99";
         background = c colors.bg;
         foreground = c colors.fg;

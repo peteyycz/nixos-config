@@ -50,6 +50,7 @@ in
     wf-recorder
     jq  # Used by tmux-rofi script
     sway-contrib.grimshot
+    (lib.lowPrio papirus-icon-theme)  # Used by rofi icon-theme; lowPrio avoids breeze-dark collision with gruvbox-plus-icons
   ];
 
   wayland.windowManager.sway = {

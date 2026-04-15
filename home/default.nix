@@ -335,16 +335,56 @@
     enable = true;
     gtk4.theme = null;
     iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
+      name = "Gruvbox-Plus-Dark";
+      package = pkgs.gruvbox-plus-icons;
     };
+    gtk4.extraCss = ''
+      @define-color window_bg_color #1d2021;
+      @define-color window_fg_color #ebdbb2;
+      @define-color view_bg_color #282828;
+      @define-color view_fg_color #ebdbb2;
+      @define-color headerbar_bg_color #1d2021;
+      @define-color headerbar_fg_color #ebdbb2;
+      @define-color headerbar_border_color #3c3836;
+      @define-color headerbar_backdrop_color #1d2021;
+      @define-color sidebar_bg_color #1d2021;
+      @define-color sidebar_fg_color #bdae93;
+      @define-color sidebar_backdrop_color #1d2021;
+      @define-color secondary_sidebar_bg_color #282828;
+      @define-color secondary_sidebar_fg_color #bdae93;
+      @define-color card_bg_color #3c3836;
+      @define-color card_fg_color #ebdbb2;
+      @define-color popover_bg_color #282828;
+      @define-color popover_fg_color #ebdbb2;
+      @define-color dialog_bg_color #282828;
+      @define-color dialog_fg_color #ebdbb2;
+      @define-color accent_bg_color #fe8019;
+      @define-color accent_fg_color #1d2021;
+      @define-color accent_color #fabd2f;
+      @define-color destructive_bg_color #cc241d;
+      @define-color destructive_fg_color #ebdbb2;
+      @define-color destructive_color #fb4934;
+      @define-color success_bg_color #98971a;
+      @define-color success_color #b8bb26;
+      @define-color warning_bg_color #d79921;
+      @define-color warning_color #fabd2f;
+      @define-color error_bg_color #cc241d;
+      @define-color error_color #fb4934;
+    '';
   };
 
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
       enable-animations = false;
-      icon-theme = "Papirus-Dark";
+      icon-theme = "Gruvbox-Plus-Dark";
+    };
+    "org/gnome/nautilus/preferences" = {
+      default-folder-viewer = "list-view";
+      show-hidden-files = true;
+    };
+    "org/gtk/settings/file-chooser" = {
+      show-hidden = true;
     };
   };
 

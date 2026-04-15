@@ -219,6 +219,10 @@ in
         { criteria = { class = "^Steam$"; title = "^Steam$"; }; command = "floating disable"; }
         { criteria = { class = "^steam_app"; }; command = "inhibit_idle focus"; }
         { criteria = { class = ".*"; }; command = "inhibit_idle fullscreen"; }
+        { criteria = { app_id = "^org\\.gnome\\.Nautilus$"; }; command = "floating enable"; }
+        { criteria = { app_id = "^imv$"; }; command = "floating enable"; }
+        { criteria = { app_id = "^mpv$"; }; command = "floating enable"; }
+        { criteria = { app_id = "^org\\.gnome\\.NautilusPreviewer$"; }; command = "floating enable"; }
       ];
 
       startup = [

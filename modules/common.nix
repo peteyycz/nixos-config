@@ -79,6 +79,7 @@
     nautilus
     nautilus-open-any-terminal
     file-roller
+    sushi
     swayosd
     wev
     openssl

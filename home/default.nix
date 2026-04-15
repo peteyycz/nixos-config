@@ -53,6 +53,8 @@
     mongodb-tools
 
     mediainfo
+    imv
+    mpv
 
     gh
     ghq
@@ -381,9 +383,11 @@
     };
     "org/gnome/nautilus/preferences" = {
       default-folder-viewer = "list-view";
-      show-hidden-files = true;
     };
     "org/gtk/settings/file-chooser" = {
+      show-hidden = true;
+    };
+    "org/gtk/gtk4/settings/file-chooser" = {
       show-hidden = true;
     };
   };

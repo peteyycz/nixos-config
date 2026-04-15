@@ -40,6 +40,12 @@
     pulse.enable = true;
   };
 
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+  services.blueman.enable = true;
+
   services.libinput.enable = true;
 
   programs.nix-ld.enable = true;
@@ -56,11 +62,20 @@
     where-is-my-sddm-theme
 
     pavucontrol
+    pasystray
+
+    unzip
 
     stow
     git
     wl-clipboard
+
     google-chrome
+    slack
+    swayosd
+    wev
+    openssl
+    tree-sitter
   ];
 
   programs._1password.enable = true;

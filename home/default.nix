@@ -7,6 +7,22 @@
 
   home.stateVersion = "25.05";
 
+  home.file.".local/share/backgrounds/default.jpg".source = pkgs.fetchurl {
+    url = "https://w.wallhaven.cc/full/5y/wallhaven-5ykkv3.jpg";
+    sha256 = "1cdh9hxl65z3a3crqkiycv246q64y2k98drjal91laf3nahc8zkg";
+  };
+
+  programs.peon-ping = {
+    enable = true;
+    installPacks = [ "peon" ];
+    settings = {
+      enabled = true;
+      desktop_notifications = true;
+      volume = 0.5;
+      default_pack = "peon";
+    };
+  };
+
   home.packages = with pkgs; [
     networkmanagerapplet
 
@@ -14,6 +30,7 @@
     gnumake
 
     nodejs_24
+    go
 
     nixd
     nixfmt
@@ -25,12 +42,13 @@
 
     kubectl
     kubernetes-helm
-    awscli2
 
+    awscli2
     opentofu
     terraform
     terragrunt
     pomerium-cli
+    vault
     mongosh
     mongodb-tools
 
@@ -38,7 +56,6 @@
 
     gh
     ghq
-    vault
     piper-tts
 
     libwebp
@@ -337,6 +354,8 @@
       "text/html" = "com.google.Chrome.desktop";
       "x-scheme-handler/http" = "com.google.Chrome.desktop";
       "x-scheme-handler/https" = "com.google.Chrome.desktop";
+      "x-scheme-handler/about" = "com.google.Chrome.desktop";
+      "application/xhtml+xml" = "com.google.Chrome.desktop";
     };
   };
 }

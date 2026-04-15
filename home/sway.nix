@@ -126,6 +126,12 @@ in
         "${modifier}+Return" = "exec ${terminal}";
         "${modifier}+q" = "kill";
         "${modifier}+d" = "exec ${menu}";
+
+        # Volume / mic
+        "XF86AudioMute" = "exec swayosd-client --output-volume mute-toggle";
+        "XF86AudioLowerVolume" = "exec swayosd-client --output-volume lower";
+        "XF86AudioRaiseVolume" = "exec swayosd-client --output-volume raise";
+        "XF86AudioMicMute" = "exec swayosd-client --input-volume mute-toggle";
         "${modifier}+Escape" = "exec loginctl lock-session";
         "${modifier}+Shift+c" = "reload";
         "${modifier}+Shift+e" = ''exec "echo -e 'Lock\nLogout\nSuspend\nShutdown\nRestart' | rofi -dmenu -p 'Power' -i | xargs -I {} sh -c 'case {} in Lock) loginctl lock-session;; Logout) swaymsg exit;; Suspend) systemctl suspend;; Shutdown) systemctl poweroff;; Restart) systemctl reboot;; esac'"'';
@@ -218,6 +224,9 @@ in
         { command = "test -x $HOME/Code/src/github.com/peteyycz/scripts/@peteyycz:dev-start.sh && $HOME/Code/src/github.com/peteyycz/scripts/@peteyycz:dev-start.sh"; }
         { command = "sleep 0.5 && swaymsg 'workspace ${ws1}; exec ${terminal}'"; }
         { command = "1password --silent"; }
+        { command = "swayosd-server"; }
+        { command = "blueman-applet"; }
+        { command = "pasystray"; }
       ];
 
       bars = [{

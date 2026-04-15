@@ -31,9 +31,25 @@ let
   # Strip # from color for configs that don't want it
   c = color: lib.removePrefix "#" color;
 
+  # Convert a "#RRGGBB" color to a GTK/CSS rgba() string with the given alpha
+  rgba = color: alpha:
+    let
+      hex = lib.removePrefix "#" color;
+      hexDigit = {
+        "0" = 0; "1" = 1; "2" = 2; "3" = 3; "4" = 4;
+        "5" = 5; "6" = 6; "7" = 7; "8" = 8; "9" = 9;
+        "a" = 10; "b" = 11; "c" = 12; "d" = 13; "e" = 14; "f" = 15;
+        "A" = 10; "B" = 11; "C" = 12; "D" = 13; "E" = 14; "F" = 15;
+      };
+      byte = offset:
+        hexDigit.${builtins.substring offset 1 hex} * 16
+        + hexDigit.${builtins.substring (offset + 1) 1 hex};
+    in
+      "rgba(${toString (byte 0)}, ${toString (byte 2)}, ${toString (byte 4)}, ${toString alpha})";
+
   modifier = "Mod4";
   terminal = "foot";
-  menu = "rofi -terminal '${terminal}' -show combi -combi-modes 'drun#run' -modes combi";
+  menu = "rofi -terminal '${terminal}' -show drun";
 
   # Workspace names with icons
   ws1 = "1: 󰆍";
@@ -41,6 +57,24 @@ let
   ws3 = "3: 󰓓";
   ws4 = "4: 󰊗";
   ws9 = "9: 󰒱";
+
+  open-runde = pkgs.stdenvNoCC.mkDerivation {
+    pname = "open-runde";
+    version = "1.0.1";
+    src = pkgs.fetchzip {
+      url = "https://github.com/lauridskern/open-runde/releases/download/v1.0.1/OpenRunde-1.0.1.zip";
+      sha256 = "1nv2124hpkmvn5byk9xnm3vq7nh0ivlld0nndmm5dvw142mf222x";
+      stripRoot = false;
+    };
+    installPhase = ''
+      install -Dm644 -t $out/share/fonts/opentype "$src"/OpenRunde-1.0.1/desktop/*.otf
+    '';
+    meta = {
+      description = "A soft, rounded variant of Inter";
+      homepage = "https://github.com/lauridskern/open-runde";
+      license = lib.licenses.ofl;
+    };
+  };
 in
 {
   home.packages = with pkgs; [
@@ -49,6 +83,8 @@ in
     slurp
     wf-recorder
     jq  # Used by tmux-rofi script
+    inter
+    open-runde
     sway-contrib.grimshot
     (lib.lowPrio papirus-icon-theme)  # Used by rofi icon-theme; lowPrio avoids breeze-dark collision with gruvbox-plus-icons
   ];
@@ -63,31 +99,31 @@ in
       inherit modifier terminal menu;
 
       fonts = {
-        names = [ "VictorMono Nerd Font" ];
+        names = [ "Open Runde" ];
         size = 11.0;
       };
 
       colors = {
         focused = {
-          border = colors.bg3;
+          border = colors.bgHard;
           background = colors.bgHard;
           text = colors.fg;
           indicator = colors.orange;
-          childBorder = colors.bg3;
+          childBorder = colors.bgHard;
         };
         focusedInactive = {
-          border = colors.bg1;
+          border = colors.bg;
           background = colors.bg;
           text = colors.fg3;
-          indicator = colors.bg1;
-          childBorder = colors.bg1;
+          indicator = colors.bg;
+          childBorder = colors.bg;
         };
         unfocused = {
-          border = colors.bg1;
+          border = colors.bg;
           background = colors.bg;
           text = colors.gray;
-          indicator = colors.bg1;
-          childBorder = colors.bg1;
+          indicator = colors.bg;
+          childBorder = colors.bg;
         };
         urgent = {
           border = colors.red;
@@ -240,7 +276,33 @@ in
     };
 
     extraConfig = ''
-      titlebar_padding 8 4
+      titlebar_padding 14 8
+      gaps inner 8
+      gaps outer 4
+
+      default_border pixel 0
+      default_floating_border pixel 0
+
+      corner_radius 12
+
+      shadows enable
+      shadows_on_csd enable
+      shadow_blur_radius 20
+      shadow_color #0000007F
+      shadow_offset 0 5
+
+      blur enable
+      blur_passes 3
+      blur_radius 5
+      blur_saturation 1.1
+
+      default_dim_inactive 0.15
+      dim_inactive_colors.unfocused #000000FF
+      dim_inactive_colors.urgent #900000FF
+
+      layer_effects "waybar" blur enable; blur_ignore_transparent enable
+      layer_effects "rofi" blur enable; blur_ignore_transparent enable
+      layer_effects "notifications" blur enable; blur_ignore_transparent enable
     '';
   };
 
@@ -262,24 +324,24 @@ in
         progress_bar_frame_width = 1;
         progress_bar_min_width = 150;
         progress_bar_max_width = 300;
-        progress_bar_corner_radius = 0;
+        progress_bar_corner_radius = 8;
         progress_bar_corners = "all";
 
-        icon_corner_radius = 0;
+        icon_corner_radius = 8;
         icon_corners = "all";
 
         indicate_hidden = true;
         separator_height = 2;
-        padding = 12;
-        horizontal_padding = 12;
-        text_icon_padding = 12;
-        frame_width = 1;
+        padding = 20;
+        horizontal_padding = 20;
+        text_icon_padding = 16;
+        frame_width = 0;
         frame_color = colors.bg1;
         gap_size = 8;
         separator_color = "frame";
         sort = true;
 
-        font = "VictorMono Nerd Font Propo 10";
+        font = "Open Runde 11";
         line_height = 0;
         markup = "full";
         format = "<b>%s</b>\\n%b";
@@ -304,7 +366,7 @@ in
         dmenu = "/usr/bin/dmenu -p dunst:";
         browser = "/usr/bin/xdg-open";
         always_run_script = true;
-        corner_radius = 0;
+        corner_radius = 12;
         corners = "all";
         ignore_dbusclose = false;
         force_xwayland = false;
@@ -349,7 +411,7 @@ in
 
   programs.rofi = {
     enable = true;
-    font = "VictorMono Nerd Font Propo 13";
+    font = "Open Runde 16";
     extraConfig = {
       modi = "drun,run,window";
       show-icons = true;
@@ -383,18 +445,19 @@ in
         highlight = mkLiteral "bold ${colors.purple}";
       };
       window = {
-        width = mkLiteral "400px";
+        width = mkLiteral "680px";
         background-color = mkLiteral "@bg";
-        border = mkLiteral "2px solid";
-        border-color = mkLiteral "@bg2";
-        border-radius = 0;
+        border = mkLiteral "0";
+        border-radius = mkLiteral "16px";
       };
       mainbox = {
-        padding = mkLiteral "12px";
+        padding = mkLiteral "16px";
       };
       inputbar = {
-        padding = mkLiteral "8px 12px";
-        margin = mkLiteral "0 0 12px 0";
+        padding = mkLiteral "14px 20px";
+        margin = mkLiteral "0 0 16px 0";
+        background-color = mkLiteral "@bg1";
+        border-radius = mkLiteral "9999px";
         children = map mkLiteral [ "prompt" "textbox-prompt-colon" "entry" ];
       };
       prompt = {
@@ -410,20 +473,24 @@ in
         text-color = mkLiteral "@fg";
       };
       listview = {
-        lines = 12;
+        lines = 8;
         columns = 1;
         fixed-height = true;
+        spacing = mkLiteral "4px";
       };
       element = {
-        padding = mkLiteral "4px 12px";
+        padding = mkLiteral "10px 16px";
+        border-radius = mkLiteral "12px";
+        spacing = mkLiteral "12px";
       };
       "element selected" = {
         background-color = mkLiteral "@bg2";
         text-color = mkLiteral "@purple";
+        border-radius = mkLiteral "12px";
       };
       element-icon = {
-        size = mkLiteral "20px";
-        margin = mkLiteral "0 8px 0 0";
+        size = mkLiteral "32px";
+        margin = mkLiteral "0 12px 0 0";
       };
       element-text = {
         vertical-align = mkLiteral "0.5";
@@ -436,9 +503,12 @@ in
     settings = [{
       layer = "top";
       position = "top";
+      margin-top = 10;
+      margin-left = 8;
+      margin-right = 8;
       modules-left = [ "sway/workspaces" "sway/mode" ];
       modules-center = [ "clock" ];
-      modules-right = [ "custom/recording" "cpu" "memory" "battery" "sway/language" "custom/dotfiles" "tray" ];
+      modules-right = [ "custom/recording" "cpu" "memory" "battery" "network" "sway/language" "custom/dotfiles" "tray" ];
 
       "custom/dotfiles" = {
         exec = ''cd ~/Code/src/github.com/peteyycz/nixos-config && if [ -n "$(git status --porcelain)" ]; then echo '{"text": "~/.", "tooltip": "Config has uncommitted changes", "class": "dirty"}'; else echo '{}'; fi'';
@@ -463,7 +533,8 @@ in
       };
 
       clock = {
-        format = "{:%A (%B %d) %I:%M %p}";
+        format = "{:%I:%M %p}";
+        tooltip-format = "{:%A, %B %d %Y}";
       };
 
       cpu = {
@@ -487,6 +558,19 @@ in
         tooltip-format = "{timeTo}\n{power}W";
       };
 
+      "sway/language" = {
+        format = "<span font_family='VictorMono Nerd Font Propo' rise='-1500'>󰌌</span> {short}";
+      };
+
+      network = {
+        format-wifi = "<span font_family='VictorMono Nerd Font Propo' rise='-1500'>󰖩</span> {essid}";
+        format-ethernet = "<span font_family='VictorMono Nerd Font Propo' rise='-1500'>󰈀</span> {ifname}";
+        format-disconnected = "<span font_family='VictorMono Nerd Font Propo' rise='-1500'>󰖪</span> offline";
+        tooltip-format-wifi = "{essid} ({signalStrength}%)\n{ipaddr}";
+        tooltip-format-ethernet = "{ifname}\n{ipaddr}";
+        on-click = "foot -e nmtui";
+      };
+
       tray = {
         icon-size = 16;
         spacing = 8;
@@ -494,57 +578,89 @@ in
     }];
     style = ''
       * {
-        font-family: "VictorMono Nerd Font Propo";
+        font-family: "Open Runde";
         font-size: 12pt;
-        font-weight: 500;
         border: none;
         border-radius: 0;
         min-height: 0;
       }
 
+      #clock {
+        font-weight: 500;
+      }
+
+      #network {
+        color: ${colors.orange};
+      }
+
+      #network.disconnected {
+        color: ${colors.red};
+      }
+
       window#waybar {
-        background: ${colors.bg};
+        background: transparent;
         color: ${colors.fg};
       }
 
       #waybar > box {
-        padding: 4px 4px;
+        padding: 4px 8px;
+      }
+
+      #workspaces,
+      #clock,
+      #tray,
+      #cpu,
+      #memory,
+      #battery,
+      #network,
+      #language,
+      #custom-dotfiles,
+      #custom-recording.active {
+        background: ${rgba colors.bgHard 0.95};
+        border-radius: 9999px;
+        margin: 0 4px;
+        padding: 6px 18px;
+      }
+
+      #workspaces {
+        padding: 6px 10px;
       }
 
       #workspaces button {
-        padding: 4px 8px;
-        background: ${colors.bg};
+        padding: 0 16px;
+        margin: 0;
+        background-color: transparent;
         color: ${colors.gray};
         border: none;
+        border-radius: 9999px;
+      }
+
+      #workspaces button:hover {
+        background-color: ${colors.bg2};
+        color: ${colors.fg};
       }
 
       #workspaces button.visible {
-        background: ${colors.bg1};
+        background-color: ${colors.bg1};
         color: ${colors.fg};
       }
 
       #workspaces button.focused {
-        background: ${colors.purple};
+        background-color: ${colors.purple};
         color: ${colors.bg};
       }
 
       #workspaces button.urgent {
-        background: ${colors.red};
+        background-color: ${colors.red};
         color: ${colors.bg};
       }
 
       #mode {
         background: ${colors.yellow};
         color: ${colors.bg};
-        padding: 0 8px;
-      }
-
-      #clock {
-        color: ${colors.fg};
-      }
-
-      #tray {
-        padding: 0 8px;
+        border-radius: 9999px;
+        margin: 0 4px;
+        padding: 6px 18px;
       }
 
       #tray > .passive {
@@ -558,18 +674,15 @@ in
 
       #custom-dotfiles.dirty {
         color: ${colors.yellow};
-        padding: 0 8px;
       }
 
       #custom-recording.active {
         color: ${colors.bg};
         background: ${colors.red};
-        padding: 0 8px;
       }
 
       #cpu {
-        color: ${colors.fg4};
-        padding: 0 8px;
+        color: ${colors.blue};
       }
 
       #cpu.warning {
@@ -581,8 +694,7 @@ in
       }
 
       #memory {
-        color: ${colors.fg4};
-        padding: 0 8px;
+        color: ${colors.aqua};
       }
 
       #memory.warning {
@@ -594,8 +706,7 @@ in
       }
 
       #battery {
-        color: ${colors.aqua};
-        padding: 0 8px;
+        color: ${colors.green};
       }
 
       #battery.charging {
@@ -612,7 +723,6 @@ in
 
       #language {
         color: ${colors.purple};
-        padding: 0 8px;
       }
     '';
   };
@@ -686,7 +796,7 @@ in
         show-urls-launch = "Control+Shift+o";
       };
       colors-dark = {
-        alpha = "0.99";
+        alpha = "0.95";
         background = c colors.bg;
         foreground = c colors.fg;
         regular0 = c colors.bg;

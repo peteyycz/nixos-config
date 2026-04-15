@@ -26,6 +26,10 @@
     enable = true;
     wlr.enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.sway = {
+      default = lib.mkForce [ "wlr" "gtk" ];
+      "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
+    };
   };
 
   time.timeZone = "Europe/Budapest";
@@ -88,7 +92,10 @@
 
   programs._1password.enable = true;
   programs._1password-gui.enable = true;
-  programs.sway.enable = true;
+  programs.sway = {
+    enable = true;
+    package = pkgs.swayfx;
+  };
 
   programs.neovim = {
     enable = true;

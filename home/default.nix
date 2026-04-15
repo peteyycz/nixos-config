@@ -3,14 +3,20 @@
 {
   imports = [
     ./sway.nix
+    ./mail.nix
   ];
 
   home.stateVersion = "25.05";
 
   home.file.".local/share/backgrounds/default.jpg".source = pkgs.fetchurl {
-    url = "https://w.wallhaven.cc/full/5y/wallhaven-5ykkv3.jpg";
-    sha256 = "1cdh9hxl65z3a3crqkiycv246q64y2k98drjal91laf3nahc8zkg";
+    url = "https://w.wallhaven.cc/full/rq/wallhaven-rqoem7.jpg";
+    sha256 = "15c4vhpx840cli88dgfzk7r4y3gx1cf8a04w5x074gwh4da1hi5p";
   };
+
+  home.file.".config/chrome-flags.conf".text = ''
+    --force-dark-mode
+    --enable-features=WebUIDarkMode
+  '';
 
   programs.peon-ping = {
     enable = true;
@@ -197,7 +203,7 @@
     extraConfig = ''
       set -g allow-passthrough on
       set -g cursor-style block
-      set -g status-position top
+      set -g status-position bottom
       set -g status-right ""
       set -g status-left "[#S] "
       set -g status-left-length 50
@@ -335,7 +341,17 @@
 
   gtk = {
     enable = true;
+    gtk3.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
+    gtk4.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
     gtk4.theme = null;
+    font = {
+      name = "Open Runde";
+      size = 11;
+    };
     iconTheme = {
       name = "Gruvbox-Plus-Dark";
       package = pkgs.gruvbox-plus-icons;
@@ -380,6 +396,8 @@
       color-scheme = "prefer-dark";
       enable-animations = false;
       icon-theme = "Gruvbox-Plus-Dark";
+      font-name = "Open Runde 11";
+      document-font-name = "Open Runde 11";
     };
     "org/gnome/nautilus/preferences" = {
       default-folder-viewer = "list-view";

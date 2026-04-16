@@ -22,7 +22,8 @@ in
   };
 
   xdg.configFile."hyprpanel/modules.scss".text = ''
-    .cmodule-dotfiles {
+    .cmodule-dotfiles,
+    .cmodule-recording {
       background-color: ${colors.bg}F2;
       color: ${colors.red};
       border-color: ${colors.red};
@@ -281,6 +282,7 @@ in
         left = [ "dashboard" "workspaces" "windowtitle" "media" ];
         middle = [ "clock" ];
         right = [
+          "custom/recording"
           "volume"
           "bluetooth"
           "network"
@@ -289,7 +291,6 @@ in
         ] ++ [
           "kbLayout"
           "custom/dotfiles"
-          "custom/recording"
           "notifications"
         ];
       };

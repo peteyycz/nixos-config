@@ -13,7 +13,29 @@ in
     enable = true;
     settings = {
       preload = [ "${config.home.homeDirectory}/.local/share/backgrounds/default.jpg" ];
-      wallpaper = [ ",${config.home.homeDirectory}/.local/share/backgrounds/default.jpg" ];
+      wallpaper = [{
+        monitor = "";
+        path = "${config.home.homeDirectory}/.local/share/backgrounds/default.jpg";
+        fit_mode = "cover";
+      }];
+    };
+  };
+
+  xdg.configFile."hyprpanel/modules.json".text = builtins.toJSON {
+    "custom/dotfiles" = {
+      icon = "󰊢";
+      label = "{}";
+      execute = "bash -c 'cd ~/Code/src/github.com/peteyycz/nixos-config && [ -n \"$(git status --porcelain)\" ] && echo dirty || echo clean'";
+      interval = 30000;
+      actions.onLeftClick = "${terminal} --working-directory=$HOME/Code/src/github.com/peteyycz/nixos-config $SHELL -c 'git status; exec $SHELL'";
+    };
+    "custom/recording" = {
+      icon = "󰻂";
+      label = "{}";
+      hideOnEmpty = true;
+      execute = "bash -c 'pgrep -x wf-recorder >/dev/null && echo REC || echo \"\"'";
+      interval = 2000;
+      actions.onLeftClick = "pkill -SIGINT -x wf-recorder";
     };
   };
 
@@ -200,7 +222,7 @@ in
         "ALT, Print, exec, grimblast save active"
         "CTRL, Print, exec, grimblast copy area"
         ''$mod, Print, exec, bash -c 'region=$(slurp) && wf-recorder -g "$region" -f ~/Videos/recording-$(date +%Y%m%d-%H%M%S).mp4' ''
-        "$mod SHIFT, Print, exec, killall -s SIGINT wf-recorder"
+        "$mod SHIFT, Print, exec, pkill -SIGINT -x wf-recorder"
       ];
 
       bindl = [
@@ -266,21 +288,6 @@ in
       bar.network.truncation = true;
       bar.network.truncation_size = 12;
 
-      bar.customModules.dotfiles = {
-        icon = "󰊢";
-        label = "{}";
-        execute = "bash -c 'cd ~/Code/src/github.com/peteyycz/nixos-config && [ -n \"$(git status --porcelain)\" ] && echo dirty || echo clean'";
-        interval = 30000;
-        actions.onLeftClick = "${terminal} --working-directory=$HOME/Code/src/github.com/peteyycz/nixos-config $SHELL -c 'git status; exec $SHELL'";
-      };
-      bar.customModules.recording = {
-        icon = "󰻂";
-        label = "{}";
-        hideOnEmpty = true;
-        execute = "bash -c 'pgrep -x wf-recorder >/dev/null && echo REC || echo \"\"'";
-        interval = 2000;
-        actions.onLeftClick = "killall -s SIGINT wf-recorder";
-      };
     } (lib.optionalAttrs isLaptop {
       bar.battery.label = true;
     } // (import ./hyprpanel-theme.nix { inherit colors; }));

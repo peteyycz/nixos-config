@@ -1,6 +1,11 @@
 { config, lib, pkgs, ... }:
 
 let
+  wallpaper = pkgs.fetchurl {
+    url = "https://w.wallhaven.cc/full/9o/wallhaven-9o8k9w.jpg";
+    sha256 = "0gsvramfqdfcgjclqndwnkcqa5a1z6fnnq0jrmz3k4icc4sqigyy";
+  };
+
   pixie-sddm-theme = pkgs.stdenvNoCC.mkDerivation {
     pname = "pixie-sddm";
     version = "3.0";
@@ -16,6 +21,7 @@ let
       mkdir -p $out/share/sddm/themes/pixie
       cp -r assets components Main.qml metadata.desktop theme.conf LICENSE \
         $out/share/sddm/themes/pixie/
+      cp ${wallpaper} $out/share/sddm/themes/pixie/assets/background.jpg
       runHook postInstall
     '';
   };
@@ -123,6 +129,8 @@ in
     viAlias = true;
     vimAlias = true;
   };
+
+  fonts.packages = with pkgs.nerd-fonts; [ symbols-only jetbrains-mono ];
 
   services.displayManager = {
     sddm = {

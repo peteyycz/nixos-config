@@ -48,7 +48,6 @@ in
     coturn
 
     nerd-fonts.victor-mono
-    nerd-fonts.symbols-only
     pandoc
 
     kubectl
@@ -66,6 +65,7 @@ in
     mediainfo
     imv
     mpv
+    spotify
 
     gh
     ghq
@@ -214,12 +214,12 @@ in
     extraConfig = ''
       set -g allow-passthrough on
       set -g cursor-style block
+      set -g status on
       set -g status-position bottom
       set -g status-right ""
       set -g status-left "[#S] "
       set -g status-left-length 50
       set -g status-style bg=#282828
-      set -g status 2
       setw -g pane-base-index 1
       set -g status-keys vi
       setw -g clock-mode-style 12

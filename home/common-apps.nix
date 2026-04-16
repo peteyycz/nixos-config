@@ -170,12 +170,14 @@ in
     };
   };
 
+  services.playerctld.enable = true;
+
   services.swayidle = {
     enable = true;
-    events = [
-      { event = "lock"; command = "${pkgs.swaylock}/bin/swaylock -f"; }
-      { event = "before-sleep"; command = "${pkgs.swaylock}/bin/swaylock -f"; }
-    ];
+    events = {
+      lock = "${pkgs.swaylock}/bin/swaylock -f";
+      before-sleep = "${pkgs.swaylock}/bin/swaylock -f";
+    };
   };
 
   programs.foot = {

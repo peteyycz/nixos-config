@@ -221,7 +221,7 @@ in
       theme.font.weight = 400;
       theme.bar.floating = true;
       theme.bar.transparent = true;
-      bar.launcher.icon = "";
+      bar.launcher.icon = "󱄅";
       theme.bar.outer_spacing = "0";
       theme.bar.margin_top = "0.2em";
       theme.bar.buttons.style = "default";
@@ -233,7 +233,7 @@ in
       "theme.bar.buttons.modules.ram.spacing" = "0.9em";
 
       bar.layouts."0" = {
-        left = [ "dashboard" "workspaces" "windowtitle" ];
+        left = [ "dashboard" "workspaces" "windowtitle" "media" ];
         middle = [ "clock" ];
         right = [
           "network"

@@ -7,27 +7,6 @@ let
 
   terminal = "foot";
   menu = "rofi -terminal '${terminal}' -show drun";
-
-  gaugeGlyph = ''
-    if   [ "$u" -lt 20 ]; then g=○
-    elif [ "$u" -lt 40 ]; then g=◔
-    elif [ "$u" -lt 60 ]; then g=◑
-    elif [ "$u" -lt 80 ]; then g=◕
-    else                       g=●
-    fi
-  '';
-
-  cpuGaugeScript = pkgs.writeShellScript "hyprpanel-cpu-gauge" ''
-    u=$(LC_ALL=C ${pkgs.procps}/bin/top -bn2 -d 0.2 | awk '/Cpu\(s\)/ {print int(100 - $8 + 0.5)}' | tail -1)
-    ${gaugeGlyph}
-    echo "$g $u%"
-  '';
-
-  ramGaugeScript = pkgs.writeShellScript "hyprpanel-ram-gauge" ''
-    u=$(${pkgs.procps}/bin/free | awk '/^Mem:/ {printf "%d", $3*100/$2}')
-    ${gaugeGlyph}
-    echo "$g $u%"
-  '';
 in
 {
   home.packages = [ pkgs.swaybg ];
@@ -257,8 +236,6 @@ in
         left = [ "dashboard" "workspaces" "windowtitle" ];
         middle = [ "clock" ];
         right = [
-          "custom/cpugauge"
-          "custom/ramgauge"
           "network"
           "battery"
           "kbLayout"
@@ -271,27 +248,10 @@ in
 
       bar.clock.format = "%a %d %b  %H:%M";
       bar.clock.leftClick = "${terminal} -e cal -3";
-      bar.cpu.leftClick = "${terminal} -e btop";
-      bar.ram.leftClick = "${terminal} -e btop";
       bar.network.leftClick = "${terminal} -e nmtui";
       bar.network.truncation = true;
       bar.network.truncation_size = 12;
       bar.battery.label = true;
-
-      bar.customModules.cpugauge = {
-        icon = "";
-        label = "{}";
-        execute = "${cpuGaugeScript}";
-        interval = 2000;
-        actions.onLeftClick = "${terminal} -e btop";
-      };
-      bar.customModules.ramgauge = {
-        icon = "";
-        label = "{}";
-        execute = "${ramGaugeScript}";
-        interval = 3000;
-        actions.onLeftClick = "${terminal} -e btop";
-      };
 
       bar.customModules.dotfiles = {
         icon = "󰊢";

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, isLaptop, ... }:
 
 let
   colorsLib = import ./colors.nix { inherit lib; };
@@ -237,7 +237,9 @@ in
         middle = [ "clock" ];
         right = [
           "network"
+        ] ++ lib.optionals isLaptop [
           "battery"
+        ] ++ [
           "kbLayout"
           "systray"
           "custom/dotfiles"
@@ -251,7 +253,6 @@ in
       bar.network.leftClick = "${terminal} -e nmtui";
       bar.network.truncation = true;
       bar.network.truncation_size = 12;
-      bar.battery.label = true;
 
       bar.customModules.dotfiles = {
         icon = "󰊢";
@@ -268,6 +269,8 @@ in
         interval = 2000;
         actions.onLeftClick = "killall -s SIGINT wf-recorder";
       };
+    } // lib.optionalAttrs isLaptop {
+      bar.battery.label = true;
     } // (import ./hyprpanel-theme.nix { inherit colors; });
   };
 }

@@ -13,7 +13,7 @@
   outputs = { self, nixpkgs, home-manager, peon-ping, ... }:
     let
       system = "x86_64-linux";
-      mkHost = name: nixpkgs.lib.nixosSystem {
+      mkHost = name: { isLaptop ? false }: nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
           ./hosts/${name}/configuration.nix
@@ -21,6 +21,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit isLaptop; };
             home-manager.users.peteyycz = import ./home;
             home-manager.sharedModules = [
               peon-ping.homeManagerModules.default
@@ -35,9 +36,9 @@
     in
     {
       nixosConfigurations = {
-        t440p = mkHost "t440p";
-        t14g2 = mkHost "t14g2";
-        homepc = mkHost "homepc";
+        t440p = mkHost "t440p" { isLaptop = true; };
+        t14g2 = mkHost "t14g2" { isLaptop = true; };
+        homepc = mkHost "homepc" {};
       };
     };
 }

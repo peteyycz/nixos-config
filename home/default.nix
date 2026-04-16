@@ -1,16 +1,21 @@
 { config, pkgs, lib, ... }:
 
+let
+  colorsLib = import ./colors.nix { inherit lib; };
+  colors = colorsLib.palette;
+in
 {
   imports = [
-    ./sway.nix
+    ./common-apps.nix
+    ./hyprland.nix
     ./mail.nix
   ];
 
   home.stateVersion = "25.05";
 
   home.file.".local/share/backgrounds/default.jpg".source = pkgs.fetchurl {
-    url = "https://w.wallhaven.cc/full/rq/wallhaven-rqoem7.jpg";
-    sha256 = "15c4vhpx840cli88dgfzk7r4y3gx1cf8a04w5x074gwh4da1hi5p";
+    url = "https://w.wallhaven.cc/full/9o/wallhaven-9o8k9w.jpg";
+    sha256 = "0gsvramfqdfcgjclqndwnkcqa5a1z6fnnq0jrmz3k4icc4sqigyy";
   };
 
   home.file.".config/chrome-flags.conf".text = ''
@@ -179,7 +184,13 @@
   '';
   home.sessionPath = [ "$HOME/.local/bin" ];
 
-  fonts.fontconfig.enable = true;
+  fonts.fontconfig = {
+    enable = true;
+    defaultFonts = {
+      sansSerif = [ "Open Runde" "Symbols Nerd Font" ];
+      monospace = [ "VictorMono Nerd Font Mono" "Symbols Nerd Font" ];
+    };
+  };
 
   services.network-manager-applet.enable = true;
 
@@ -208,6 +219,8 @@
       set -g status-left "[#S] "
       set -g status-left-length 50
       set -g status-style bg=#282828
+      set -g status 2
+      set -g 'status-format[0]' '#[fg=#3c3836,bg=#282828,align=absolute-centre]────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────'
       setw -g pane-base-index 1
       set -g status-keys vi
       setw -g clock-mode-style 12
@@ -357,37 +370,37 @@
       package = pkgs.gruvbox-plus-icons;
     };
     gtk4.extraCss = ''
-      @define-color window_bg_color #1d2021;
-      @define-color window_fg_color #ebdbb2;
-      @define-color view_bg_color #282828;
-      @define-color view_fg_color #ebdbb2;
-      @define-color headerbar_bg_color #1d2021;
-      @define-color headerbar_fg_color #ebdbb2;
-      @define-color headerbar_border_color #3c3836;
-      @define-color headerbar_backdrop_color #1d2021;
-      @define-color sidebar_bg_color #1d2021;
-      @define-color sidebar_fg_color #bdae93;
-      @define-color sidebar_backdrop_color #1d2021;
-      @define-color secondary_sidebar_bg_color #282828;
-      @define-color secondary_sidebar_fg_color #bdae93;
-      @define-color card_bg_color #3c3836;
-      @define-color card_fg_color #ebdbb2;
-      @define-color popover_bg_color #282828;
-      @define-color popover_fg_color #ebdbb2;
-      @define-color dialog_bg_color #282828;
-      @define-color dialog_fg_color #ebdbb2;
-      @define-color accent_bg_color #fe8019;
-      @define-color accent_fg_color #1d2021;
-      @define-color accent_color #fabd2f;
-      @define-color destructive_bg_color #cc241d;
-      @define-color destructive_fg_color #ebdbb2;
-      @define-color destructive_color #fb4934;
-      @define-color success_bg_color #98971a;
-      @define-color success_color #b8bb26;
-      @define-color warning_bg_color #d79921;
-      @define-color warning_color #fabd2f;
-      @define-color error_bg_color #cc241d;
-      @define-color error_color #fb4934;
+      @define-color window_bg_color ${colors.bgHard};
+      @define-color window_fg_color ${colors.fg};
+      @define-color view_bg_color ${colors.bg};
+      @define-color view_fg_color ${colors.fg};
+      @define-color headerbar_bg_color ${colors.bgHard};
+      @define-color headerbar_fg_color ${colors.fg};
+      @define-color headerbar_border_color ${colors.bg1};
+      @define-color headerbar_backdrop_color ${colors.bgHard};
+      @define-color sidebar_bg_color ${colors.bgHard};
+      @define-color sidebar_fg_color ${colors.fg3};
+      @define-color sidebar_backdrop_color ${colors.bgHard};
+      @define-color secondary_sidebar_bg_color ${colors.bg};
+      @define-color secondary_sidebar_fg_color ${colors.fg3};
+      @define-color card_bg_color ${colors.bg1};
+      @define-color card_fg_color ${colors.fg};
+      @define-color popover_bg_color ${colors.bg};
+      @define-color popover_fg_color ${colors.fg};
+      @define-color dialog_bg_color ${colors.bg};
+      @define-color dialog_fg_color ${colors.fg};
+      @define-color accent_bg_color ${colors.orange};
+      @define-color accent_fg_color ${colors.bgHard};
+      @define-color accent_color ${colors.yellow};
+      @define-color destructive_bg_color ${colors.redDark};
+      @define-color destructive_fg_color ${colors.fg};
+      @define-color destructive_color ${colors.red};
+      @define-color success_bg_color ${colors.greenDark};
+      @define-color success_color ${colors.green};
+      @define-color warning_bg_color ${colors.yellowDark};
+      @define-color warning_color ${colors.yellow};
+      @define-color error_bg_color ${colors.redDark};
+      @define-color error_color ${colors.red};
     '';
   };
 

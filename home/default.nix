@@ -220,7 +220,6 @@ in
       set -g status-left-length 50
       set -g status-style bg=#282828
       set -g status 2
-      set -g 'status-format[0]' '#[fg=#3c3836,bg=#282828,align=absolute-centre]────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────'
       setw -g pane-base-index 1
       set -g status-keys vi
       setw -g clock-mode-style 12

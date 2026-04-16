@@ -15,6 +15,7 @@
       system = "x86_64-linux";
       mkHost = name: { isLaptop ? false }: nixpkgs.lib.nixosSystem {
         inherit system;
+        specialArgs = { inherit isLaptop; };
         modules = [
           ./hosts/${name}/configuration.nix
           home-manager.nixosModules.home-manager

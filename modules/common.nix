@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, isLaptop, ... }:
 
 let
   wallpaper = pkgs.fetchurl {
@@ -68,6 +68,14 @@ in
   services.pipewire = {
     enable = true;
     pulse.enable = true;
+    wireplumber.extraConfig = lib.mkIf isLaptop {
+      "51-hide-hdmi-audio" = {
+        "monitor.alsa.rules" = [{
+          matches = [{ "node.name" = "~alsa_output\\..*HDMI.*"; }];
+          actions.update-props."node.disabled" = true;
+        }];
+      };
+    };
   };
 
   hardware.bluetooth = {
@@ -98,7 +106,6 @@ in
   environment.systemPackages = [ pixie-sddm-theme ] ++ (with pkgs; [
 
     pavucontrol
-    pasystray
 
     unzip
 

@@ -30,7 +30,6 @@ in
         "sleep 0.5 && hyprctl dispatch workspace 1 && ${terminal}"
         "1password --silent"
         "swayosd-server"
-        "blueman-applet"
       ];
 
       input = {
@@ -215,7 +214,7 @@ in
   programs.hyprpanel = {
     enable = true;
     systemd.enable = true;
-    settings = {
+    settings = lib.recursiveUpdate {
       theme.font.name = "Open Runde";
       theme.font.size = "1.05rem";
       theme.font.weight = 400;
@@ -236,12 +235,13 @@ in
         left = [ "dashboard" "workspaces" "windowtitle" "media" ];
         middle = [ "clock" ];
         right = [
+          "volume"
+          "bluetooth"
           "network"
         ] ++ lib.optionals isLaptop [
           "battery"
         ] ++ [
           "kbLayout"
-          "systray"
           "custom/dotfiles"
           "custom/recording"
           "notifications"
@@ -272,8 +272,8 @@ in
         interval = 2000;
         actions.onLeftClick = "killall -s SIGINT wf-recorder";
       };
-    } // lib.optionalAttrs isLaptop {
+    } (lib.optionalAttrs isLaptop {
       bar.battery.label = true;
-    } // (import ./hyprpanel-theme.nix { inherit colors; });
+    } // (import ./hyprpanel-theme.nix { inherit colors; }));
   };
 }

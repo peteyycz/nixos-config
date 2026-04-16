@@ -21,11 +21,25 @@ in
     };
   };
 
+  xdg.configFile."hyprpanel/modules.scss".text = ''
+    .cmodule-dotfiles {
+      background-color: ${colors.bg}F2;
+      color: ${colors.red};
+      border-color: ${colors.red};
+    }
+    .cmodule-dotfiles .button-label,
+    .cmodule-dotfiles .module-label {
+      min-width: 0;
+      padding: 0;
+      margin: 0;
+    }
+  '';
+
   xdg.configFile."hyprpanel/modules.json".text = builtins.toJSON {
     "custom/dotfiles" = {
       icon = "󰊢";
-      label = "{}";
-      execute = "bash -c 'cd ~/Code/src/github.com/peteyycz/nixos-config && [ -n \"$(git status --porcelain)\" ] && echo dirty || echo clean'";
+      hideOnEmpty = true;
+      execute = "bash -c 'cd ~/Code/src/github.com/peteyycz/nixos-config && if [ -n \"$(git status --porcelain)\" ]; then echo 1; fi'";
       interval = 30000;
       actions.onLeftClick = "${terminal} --working-directory=$HOME/Code/src/github.com/peteyycz/nixos-config $SHELL -c 'git status; exec $SHELL'";
     };
@@ -261,6 +275,7 @@ in
       theme.bar.buttons.padding_y = "0.5rem";
       theme.bar.buttons.spacing = "0.4em";
       "theme.bar.buttons.modules.ram.spacing" = "0.9em";
+      "theme.bar.buttons.modules.dotfiles.spacing" = "0";
 
       bar.layouts."0" = {
         left = [ "dashboard" "workspaces" "windowtitle" "media" ];

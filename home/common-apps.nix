@@ -31,7 +31,7 @@ in
     jq
     inter
     open-runde
-    sway-contrib.grimshot
+    grimblast
     (lib.lowPrio papirus-icon-theme)
   ];
 
@@ -124,59 +124,67 @@ in
     };
   };
 
-  programs.swaylock = {
+  programs.hyprlock = {
     enable = true;
     settings = {
-      ignore-empty-password = true;
-      show-failed-attempts = true;
+      general = {
+        ignore_empty_input = true;
+        hide_cursor = true;
+        grace = 0;
+      };
 
-      color = c colors.bg;
+      background = [{
+        monitor = "";
+        path = "${config.home.homeDirectory}/.local/share/backgrounds/default.jpg";
+        blur_passes = 3;
+        blur_size = 8;
+      }];
 
-      ring-color = c colors.bg1;
-      ring-clear-color = c colors.gray;
-      ring-caps-lock-color = c colors.yellow;
-      ring-ver-color = c colors.blueDark;
-      ring-wrong-color = c colors.red;
+      input-field = [{
+        monitor = "";
+        size = "300, 60";
+        position = "0, -80";
+        halign = "center";
+        valign = "center";
+        outline_thickness = 4;
+        dots_size = 0.25;
+        dots_spacing = 0.4;
+        dots_center = true;
+        rounding = 30;
+        outer_color = "rgb(${c colors.bg1})";
+        inner_color = "rgb(${c colors.bg})";
+        font_color = "rgb(${c colors.fg})";
+        check_color = "rgb(${c colors.blueDark})";
+        fail_color = "rgb(${c colors.red})";
+        capslock_color = "rgb(${c colors.yellow})";
+        placeholder_text = "<i>Password...</i>";
+        fail_text = "<i>$FAIL ($ATTEMPTS)</i>";
+        fade_on_empty = false;
+      }];
 
-      key-hl-color = c colors.blueDark;
-      bs-hl-color = c colors.gray;
-      caps-lock-key-hl-color = c colors.yellow;
-      caps-lock-bs-hl-color = c colors.red;
-
-      inside-color = c colors.bg;
-      inside-clear-color = c colors.bg;
-      inside-caps-lock-color = c colors.bg;
-      inside-ver-color = c colors.bg;
-      inside-wrong-color = c colors.bg;
-
-      line-color = c colors.bg;
-      line-clear-color = c colors.bg;
-      line-caps-lock-color = c colors.bg;
-      line-ver-color = c colors.bg;
-      line-wrong-color = c colors.bg;
-
-      separator-color = c colors.bg1;
-
-      text-color = c colors.fg;
-      text-clear-color = c colors.gray;
-      text-caps-lock-color = c colors.yellow;
-      text-ver-color = c colors.blueDark;
-      text-wrong-color = c colors.red;
-
-      layout-text-color = c colors.fg3;
-
-      indicator-radius = 60;
-      indicator-thickness = 20;
+      label = [{
+        monitor = "";
+        text = "cmd[update:1000] date +'%H:%M'";
+        color = "rgb(${c colors.fg})";
+        font_size = 80;
+        font_family = "Open Runde";
+        position = "0, 160";
+        halign = "center";
+        valign = "center";
+      }];
     };
   };
 
   services.playerctld.enable = true;
 
-  services.swayidle = {
+  services.hypridle = {
     enable = true;
-    events = {
-      lock = "${pkgs.swaylock}/bin/swaylock -f";
-      before-sleep = "${pkgs.swaylock}/bin/swaylock -f";
+    settings = {
+      general = {
+        lock_cmd = "pidof hyprlock || hyprlock";
+        before_sleep_cmd = "loginctl lock-session";
+        after_sleep_cmd = "hyprctl dispatch dpms on";
+      };
     };
   };
 

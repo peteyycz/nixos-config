@@ -13,10 +13,8 @@ in
 
   home.stateVersion = "25.05";
 
-  home.file.".local/share/backgrounds/default.jpg".source = pkgs.fetchurl {
-    url = "https://w.wallhaven.cc/full/9o/wallhaven-9o8k9w.jpg";
-    sha256 = "0gsvramfqdfcgjclqndwnkcqa5a1z6fnnq0jrmz3k4icc4sqigyy";
-  };
+  home.file.".local/share/backgrounds/default.jpg".source =
+    pkgs.fetchurl (import ../wallpaper.nix);
 
   home.file.".config/chrome-flags.conf".text = ''
     --force-dark-mode
@@ -112,9 +110,10 @@ in
       fi
 
       # Check if focused window is a foot terminal running tmux
-      FOCUSED_APP=$(swaymsg -t get_tree | jq -r '.. | select(.focused? == true) | .app_id // empty')
+      ACTIVE_JSON=$(hyprctl activewindow -j)
+      FOCUSED_APP=$(echo "$ACTIVE_JSON" | jq -r '.class // empty')
       if [ "$FOCUSED_APP" = "foot" ]; then
-        FOCUSED_PID=$(swaymsg -t get_tree | jq -r '.. | select(.focused? == true) | .pid')
+        FOCUSED_PID=$(echo "$ACTIVE_JSON" | jq -r '.pid')
         CHILD_PID=$(${pkgs.procps}/bin/pgrep -P "$FOCUSED_PID" | head -1)
         if [ -n "$CHILD_PID" ]; then
           TTY="/dev/$(ps -o tty= -p "$CHILD_PID" | tr -d ' ')"

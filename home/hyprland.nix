@@ -9,7 +9,13 @@ let
   menu = "rofi -terminal '${terminal}' -show drun";
 in
 {
-  home.packages = [ pkgs.swaybg ];
+  services.hyprpaper = {
+    enable = true;
+    settings = {
+      preload = [ "${config.home.homeDirectory}/.local/share/backgrounds/default.jpg" ];
+      wallpaper = [ ",${config.home.homeDirectory}/.local/share/backgrounds/default.jpg" ];
+    };
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -25,11 +31,13 @@ in
       monitor = [ ",preferred,auto,1" ];
 
       exec-once = [
-        "swaybg -i $HOME/.local/share/backgrounds/default.jpg -m fill"
         "test -x $HOME/Code/src/github.com/peteyycz/scripts/@peteyycz:dev-start.sh && $HOME/Code/src/github.com/peteyycz/scripts/@peteyycz:dev-start.sh"
         "sleep 0.5 && hyprctl dispatch workspace 1 && ${terminal}"
         "1password --silent"
         "swayosd-server"
+        "google-chrome-stable"
+        "slack"
+        "spotify"
       ];
 
       input = {
@@ -113,6 +121,7 @@ in
         "workspace 2 silent, match:class ^(google-chrome)$"
         "workspace 3 silent, match:class ^(Steam)$"
         "workspace 4 silent, match:class ^(steam_app)"
+        "workspace 7 silent, match:class ^(spotify)$"
         "workspace 9 silent, match:class ^(Slack)$"
 
         "float on, match:class ^(Steam)$"
@@ -187,9 +196,9 @@ in
 
         "$mod, R, exec, find $HOME/Code/src/github.com/peteyycz/scripts -maxdepth 1 -name '*.sh' -printf '%f\\n' | sed 's/\\.sh$//' | rofi -dmenu -p 'Scripts' -i | xargs -I {} sh -c '$HOME/Code/src/github.com/peteyycz/scripts/{}.sh'"
 
-        ", Print, exec, grimshot save output"
-        "ALT, Print, exec, grimshot save active"
-        "CTRL, Print, exec, grimshot copy anything"
+        ", Print, exec, grimblast save output"
+        "ALT, Print, exec, grimblast save active"
+        "CTRL, Print, exec, grimblast copy area"
         ''$mod, Print, exec, bash -c 'region=$(slurp) && wf-recorder -g "$region" -f ~/Videos/recording-$(date +%Y%m%d-%H%M%S).mp4' ''
         "$mod SHIFT, Print, exec, killall -s SIGINT wf-recorder"
       ];

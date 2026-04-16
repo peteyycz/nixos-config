@@ -13,7 +13,7 @@
   services.fprintd.enable = true;
 
   security.pam.services.sudo.fprintAuth = true;
-  security.pam.services.swaylock.fprintAuth = true;
+  security.pam.services.hyprlock.fprintAuth = true;
   security.pam.services.sddm.fprintAuth = true;
 
   # Has to do with some nixos internals DO NOT CHANGE

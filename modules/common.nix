@@ -87,9 +87,11 @@ in
   programs.fish.enable = true;
   users.users.peteyycz = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "docker" ];
     shell = pkgs.fish;
   };
+
+  virtualisation.docker.enable = true;
 
   services.gnome.gnome-keyring.enable = true;
 

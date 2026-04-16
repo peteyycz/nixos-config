@@ -83,6 +83,8 @@ in
 
     beam.packages.erlang_27.erlang
     beam.packages.erlang_27.elixir_1_18
+    inotify-tools
+    watchman
 
     (writeShellScriptBin "tmux-rofi" ''
       # Build list of sessions with git branch info
@@ -178,6 +180,8 @@ in
       fi
     '')
   ];
+
+  home.sessionVariables.EDITOR = "vim";
 
   home.file.".npmrc".text = ''
     prefix=~/.local

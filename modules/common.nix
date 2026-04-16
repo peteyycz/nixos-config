@@ -73,6 +73,7 @@ in
   services.gvfs.enable = true;
   services.udisks2.enable = true;
   services.tumbler.enable = true;
+  services.upower.enable = true;
 
   services.libinput.enable = true;
 

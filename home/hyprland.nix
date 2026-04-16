@@ -248,6 +248,9 @@ in
         ];
       };
 
+      bar.workspaces.showWsIcons = true;
+      bar.workspaces.showApplicationIcons = true;
+
       bar.clock.format = "%a %d %b  %H:%M";
       bar.clock.leftClick = "${terminal} -e cal -3";
       bar.network.leftClick = "${terminal} -e nmtui";

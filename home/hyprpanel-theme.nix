@@ -126,13 +126,13 @@
       "theme.bar.buttons.windowtitle.icon_background" = colors.fg;
       "theme.bar.buttons.windowtitle.text" = colors.fg;
       "theme.bar.buttons.workspaces.active" = colors.orange;
-      "theme.bar.buttons.workspaces.available" = colors.aqua;
+      "theme.bar.buttons.workspaces.available" = colors.bg3;
       "theme.bar.buttons.workspaces.background" = "${colors.bg}F2"; # ~70% alpha
       "theme.bar.buttons.workspaces.border" = colors.fg;
       "theme.bar.buttons.workspaces.hover" = colors.bg2;
       "theme.bar.buttons.workspaces.numbered_active_highlighted_text_color" = colors.bgHard;
       "theme.bar.buttons.workspaces.numbered_active_underline_color" = colors.fg;
-      "theme.bar.buttons.workspaces.occupied" = colors.red;
+      "theme.bar.buttons.workspaces.occupied" = colors.fg4;
       "theme.bar.menus.background" = colors.bgHard;
       "theme.bar.menus.border.color" = colors.bg1;
       "theme.bar.menus.buttons.active" = colors.purple;

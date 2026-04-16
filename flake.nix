@@ -37,6 +37,7 @@
       nixosConfigurations = {
         t440p = mkHost "t440p";
         t14g2 = mkHost "t14g2";
+        homepc = mkHost "homepc";
       };
     };
 }

@@ -9,6 +9,27 @@ let
   menu = "rofi -terminal '${terminal}' -show drun";
 in
 {
+  options.peteyycz = {
+    hyprpanelCustomModules = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.attrsOf lib.types.anything);
+      default = {};
+    };
+    hyprpanelCustomScss = lib.mkOption {
+      type = lib.types.lines;
+      default = "";
+    };
+    hyprlandExtraBinds = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+    };
+    hyprlandExtraWindowRules = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+    };
+  };
+
+  config = {
+
   services.hyprpaper = {
     enable = true;
     settings = {
@@ -21,22 +42,7 @@ in
     };
   };
 
-  xdg.configFile."hyprpanel/modules.scss".text = ''
-    .cmodule-dotfiles,
-    .cmodule-recording {
-      background-color: ${colors.bg}F2;
-      color: ${colors.red};
-      border-color: ${colors.red};
-    }
-    .cmodule-dotfiles .button-label,
-    .cmodule-dotfiles .module-label {
-      min-width: 0;
-      padding: 0;
-      margin: 0;
-    }
-  '';
-
-  xdg.configFile."hyprpanel/modules.json".text = builtins.toJSON {
+  peteyycz.hyprpanelCustomModules = {
     "custom/dotfiles" = {
       icon = "󰊢";
       hideOnEmpty = true;
@@ -53,6 +59,24 @@ in
       actions.onLeftClick = "pkill -SIGINT -x wf-recorder";
     };
   };
+
+  peteyycz.hyprpanelCustomScss = ''
+    .cmodule-dotfiles,
+    .cmodule-recording {
+      background-color: ${colors.bg}F2;
+      color: ${colors.red};
+      border-color: ${colors.red};
+    }
+    .cmodule-dotfiles .button-label,
+    .cmodule-dotfiles .module-label {
+      min-width: 0;
+      padding: 0;
+      margin: 0;
+    }
+  '';
+
+  xdg.configFile."hyprpanel/modules.scss".text = config.peteyycz.hyprpanelCustomScss;
+  xdg.configFile."hyprpanel/modules.json".text = builtins.toJSON config.peteyycz.hyprpanelCustomModules;
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -168,7 +192,7 @@ in
         "float on, match:class ^(imv)$"
         "float on, match:class ^(mpv)$"
         "float on, match:class ^(org\\.gnome\\.NautilusPreviewer)$"
-      ];
+      ] ++ config.peteyycz.hyprlandExtraWindowRules;
 
       bind = [
         "$mod, Return, exec, $term"
@@ -237,7 +261,7 @@ in
         "CTRL, Print, exec, grimblast copy area"
         ''$mod, Print, exec, bash -c 'region=$(slurp) && wf-recorder -g "$region" -f ~/Videos/recording-$(date +%Y%m%d-%H%M%S).mp4' ''
         "$mod SHIFT, Print, exec, pkill -SIGINT -x wf-recorder"
-      ];
+      ] ++ config.peteyycz.hyprlandExtraBinds;
 
       bindl = [
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
@@ -287,6 +311,7 @@ in
         middle = [ "clock" ];
         right = [
           "custom/recording"
+          "custom/todos"
           "volume"
           "bluetooth"
           "network"
@@ -315,5 +340,7 @@ in
     } (lib.optionalAttrs isLaptop {
       bar.battery.label = true;
     } // (import ./hyprpanel-theme.nix { inherit colors; }));
+  };
+
   };
 }

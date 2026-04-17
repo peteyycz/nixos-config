@@ -8,6 +8,7 @@ in
   imports = [
     ./common-apps.nix
     ./hyprland.nix
+    ./notes.nix
   ];
 
   home.stateVersion = "25.05";

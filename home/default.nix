@@ -8,7 +8,6 @@ in
   imports = [
     ./common-apps.nix
     ./hyprland.nix
-    ./mail.nix
   ];
 
   home.stateVersion = "25.05";
@@ -153,6 +152,9 @@ in
       done
 
       SESSION="$(basename "$PWD")"
+      if tmux has-session -t "$SESSION" 2>/dev/null; then
+        exit 0
+      fi
       tmux new-session -d -s "$SESSION" -c "$PWD"
 
       # Split horizontally: new pane on right for claude

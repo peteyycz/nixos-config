@@ -116,7 +116,7 @@ in
     nautilus-open-any-terminal
     file-roller
     sushi
-    swayosd
+    brightnessctl
     wev
     openssl
     tree-sitter

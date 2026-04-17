@@ -71,7 +71,6 @@ in
         "test -x $HOME/Code/src/github.com/peteyycz/scripts/@peteyycz:dev-start.sh && $HOME/Code/src/github.com/peteyycz/scripts/@peteyycz:dev-start.sh"
         "sleep 0.5 && hyprctl dispatch workspace 1 && ${terminal}"
         "1password --silent"
-        "swayosd-server"
         "google-chrome-stable"
         "slack"
         "spotify"
@@ -241,13 +240,15 @@ in
       ];
 
       bindl = [
-        ", XF86AudioMute, exec, swayosd-client --output-volume mute-toggle"
-        ", XF86AudioMicMute, exec, swayosd-client --input-volume mute-toggle"
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
       ];
 
       bindle = [
-        ", XF86AudioLowerVolume, exec, swayosd-client --output-volume lower"
-        ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume raise"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%-"
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"
+        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
+        ", XF86MonBrightnessUp, exec, brightnessctl set +5%"
       ];
 
       bindm = [

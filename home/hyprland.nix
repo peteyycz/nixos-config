@@ -242,6 +242,9 @@ in
       bindl = [
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+        ", XF86AudioPlay, exec, playerctl play-pause"
+        ", XF86AudioNext, exec, playerctl next"
+        ", XF86AudioPrev, exec, playerctl previous"
       ];
 
       bindle = [
@@ -298,6 +301,10 @@ in
 
       bar.workspaces.showWsIcons = true;
       bar.workspaces.showApplicationIcons = true;
+
+      bar.media.show_label = true;
+      bar.media.truncation = true;
+      bar.media.truncation_size = 40;
 
       bar.clock.format = "%a %d %b  %H:%M";
       bar.clock.leftClick = "${terminal} -e cal -3";

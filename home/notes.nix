@@ -20,7 +20,7 @@ in
         printf '# Inbox\n\n' > "$INBOX"
       fi
 
-      TEXT=$(rofi -dmenu -p "note" -l 0 -theme-str 'window {width: 40%;}')
+      TEXT=$(rofi -dmenu -p "note" -l 0 -theme-str 'window {width: 40%;} entry { placeholder: "Capture a note..."; }')
       [ -z "$TEXT" ] && exit 0
 
       printf -- '- [ ] %s — %s\n' "$(date '+%Y-%m-%d %H:%M')" "$TEXT" >> "$INBOX"

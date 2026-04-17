@@ -43,7 +43,10 @@ in
   boot.initrd.verbose = false;
   boot.plymouth.enable = true;
 
-  networking.networkmanager.enable = true;
+  networking.networkmanager = {
+    enable = true;
+    plugins = with pkgs; [ networkmanager-openvpn ];
+  };
 
   xdg.portal = {
     enable = true;
@@ -92,7 +95,7 @@ in
   programs.fish.enable = true;
   users.users.peteyycz = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" ];
+    extraGroups = [ "wheel" "docker" "networkmanager" ];
     shell = pkgs.fish;
   };
 

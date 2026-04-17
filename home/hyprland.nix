@@ -326,6 +326,7 @@ in
 
       bar.workspaces.showWsIcons = true;
       bar.workspaces.showApplicationIcons = true;
+      bar.workspaces.applicationIconMap."title:Microsoft Teams" = "󰊻";
 
       bar.media.show_label = true;
       bar.media.truncation = true;

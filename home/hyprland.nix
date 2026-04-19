@@ -244,6 +244,7 @@ in
 
         "$mod, B, togglesplit"
         "$mod, V, togglesplit"
+        "$mod, C, exec, caldy toggle"
         "$mod, W, exec, tmux-rofi"
         "$mod, E, togglesplit"
         "$mod, F, fullscreen, 0"

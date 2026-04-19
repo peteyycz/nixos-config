@@ -8,9 +8,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     peon-ping.url = "github:PeonPing/peon-ping";
+    caldy = {
+      url = "github:peteyycz/caldy";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, peon-ping, ... }:
+  outputs = { self, nixpkgs, home-manager, peon-ping, caldy, ... }:
     let
       system = "x86_64-linux";
       mkHost = name: { isLaptop ? false }: nixpkgs.lib.nixosSystem {
@@ -26,9 +30,11 @@
             home-manager.users.peteyycz = import ./home;
             home-manager.sharedModules = [
               peon-ping.homeManagerModules.default
+              caldy.homeManagerModules.default
               {
                 programs.peon-ping.package = peon-ping.packages.${system}.default;
                 home.packages = [ peon-ping.packages.${system}.default ];
+                programs.caldy.enable = true;
               }
             ];
           }

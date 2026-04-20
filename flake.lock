@@ -74,11 +74,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776629032,
-        "narHash": "sha256-eGUlGiK88ZJ2q9KXzP/OGIKhm0UF0kKXeeZEnD/A0FU=",
+        "lastModified": 1776701901,
+        "narHash": "sha256-bDOgwI8yFsxVQfry46l1nr33ChiMz6DHETK4JCNncJ4=",
         "owner": "peteyycz",
         "repo": "caldy",
-        "rev": "ef4fd9a69ea1bfd163b94fa1a7ab033512bb7b7d",
+        "rev": "da7d06a7cb426a4faef273221ff79adf7f45a4fe",
         "type": "github"
       },
       "original": {

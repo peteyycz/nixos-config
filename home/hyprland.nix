@@ -319,7 +319,7 @@ in
         ] ++ lib.optionals isLaptop [
           "battery"
         ] ++ [
-          "kbLayout"
+          "kbinput"
           "custom/dotfiles"
           "notifications"
         ];

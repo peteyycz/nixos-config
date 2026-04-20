@@ -34,7 +34,27 @@
               {
                 programs.peon-ping.package = peon-ping.packages.${system}.default;
                 home.packages = [ peon-ping.packages.${system}.default ];
-                programs.caldy.enable = true;
+                # OAuth credentials provided at runtime via EnvironmentFile
+                # (see systemd.user.services.caldy override below).
+                systemd.user.services.caldy.Service.EnvironmentFile = "%h/.config/caldy/env";
+                programs.caldy = {
+                  enable = true;
+                  settings = {
+                    week = {
+                      show_weekend = false;
+                      start_day = "monday";
+                    };
+                    theme = {
+                      bg         = "#282828";
+                      surface    = "#3c3836";
+                      surface_hi = "#504945";
+                      fg         = "#ebdbb2";
+                      fg_muted   = "#a89984";
+                      accent     = "#fabd2f";
+                      danger     = "#fb4934";
+                    };
+                  };
+                };
               }
             ];
           }

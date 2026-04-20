@@ -34,9 +34,6 @@
               {
                 programs.peon-ping.package = peon-ping.packages.${system}.default;
                 home.packages = [ peon-ping.packages.${system}.default ];
-                # OAuth credentials provided at runtime via EnvironmentFile
-                # (see systemd.user.services.caldy override below).
-                systemd.user.services.caldy.Service.EnvironmentFile = "%h/.config/caldy/env";
                 programs.caldy = {
                   enable = true;
                   settings = {

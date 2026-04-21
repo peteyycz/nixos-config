@@ -123,6 +123,7 @@ in
     wev
     openssl
     tree-sitter
+    pam_u2f
   ]);
 
   programs._1password.enable = true;

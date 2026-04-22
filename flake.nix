@@ -17,16 +17,16 @@
   outputs = { self, nixpkgs, home-manager, peon-ping, caldy, ... }:
     let
       system = "x86_64-linux";
-      mkHost = name: { isLaptop ? false }: nixpkgs.lib.nixosSystem {
+      mkHost = name: { isLaptop ? false, primaryMonitors ? [ ] }: nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = { inherit isLaptop; };
+        specialArgs = { inherit isLaptop primaryMonitors; };
         modules = [
           ./hosts/${name}/configuration.nix
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { inherit isLaptop; };
+            home-manager.extraSpecialArgs = { inherit isLaptop primaryMonitors; };
             home-manager.users.peteyycz = import ./home;
             home-manager.sharedModules = [
               peon-ping.homeManagerModules.default
@@ -60,9 +60,17 @@
     in
     {
       nixosConfigurations = {
-        t440p = mkHost "t440p" { isLaptop = true; };
-        t14g2 = mkHost "t14g2" { isLaptop = true; };
-        homepc = mkHost "homepc" {};
+        t440p = mkHost "t440p" {
+          isLaptop = true;
+          primaryMonitors = [ "HDMI-A-1" "DP-1" "DP-2" "eDP-1" ];
+        };
+        t14g2 = mkHost "t14g2" {
+          isLaptop = true;
+          primaryMonitors = [ "DP-1" "DP-2" "DP-3" "HDMI-A-1" "eDP-1" ];
+        };
+        homepc = mkHost "homepc" {
+          primaryMonitors = [ "DP-1" "HDMI-A-1" ];
+        };
       };
     };
 }

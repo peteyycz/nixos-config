@@ -1,4 +1,4 @@
-{ config, pkgs, lib, isLaptop, ... }:
+{ config, pkgs, lib, isLaptop, primaryMonitors ? [ ], ... }:
 
 let
   colorsLib = import ./colors.nix { inherit lib; };
@@ -7,6 +7,74 @@ let
 
   terminal = "foot";
   menu = "rofi -terminal '${terminal}' -show drun";
+
+  barLayout = {
+    left = [ "dashboard" "workspaces" "windowtitle" "media" ];
+    middle = [ "clock" ];
+    right = [
+      "custom/recording"
+      "custom/todos"
+      "volume"
+      "bluetooth"
+      "network"
+    ] ++ lib.optionals isLaptop [
+      "battery"
+    ] ++ [
+      "kbinput"
+      "custom/dotfiles"
+      "notifications"
+    ];
+  };
+
+  hyprpanelPrimaryBar = pkgs.writeShellApplication {
+    name = "hyprpanel-primary-bar";
+    runtimeInputs = with pkgs; [ jq socat hyprland hyprpanel coreutils ];
+    text = ''
+      set -uo pipefail
+
+      priority=("$@")
+      socket="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+
+      apply() {
+        local monitors primary="" id name desired current
+        monitors=$(hyprctl monitors -j 2>/dev/null) || return 0
+
+        for m in "''${priority[@]}"; do
+          if jq -e --arg n "$m" 'map(select(.name == $n)) | length > 0' <<<"$monitors" >/dev/null; then
+            primary="$m"
+            break
+          fi
+        done
+
+        while IFS=$'\t' read -r id name; do
+          desired=hidden
+          [[ "$name" == "$primary" ]] && desired=shown
+          current=$(hyprpanel isWindowVisible "bar-$id" 2>/dev/null || echo false)
+          case "$desired:$current" in
+            shown:false|hidden:true)
+              hyprpanel toggleWindow "bar-$id" >/dev/null 2>&1 || true
+              ;;
+          esac
+        done < <(jq -r '.[] | "\(.id)\t\(.name)"' <<<"$monitors")
+      }
+
+      for _ in $(seq 1 60); do
+        hyprpanel listWindows >/dev/null 2>&1 && break
+        sleep 0.5
+      done
+
+      apply
+
+      socat -U - UNIX-CONNECT:"$socket" | while IFS= read -r line; do
+        case "$line" in
+          monitoradded*|monitorremoved*|configreloaded*)
+            sleep 0.4
+            apply
+            ;;
+        esac
+      done
+    '';
+  };
 in
 {
   options.peteyycz = {
@@ -89,7 +157,11 @@ in
       "$term" = terminal;
       "$menu" = menu;
 
-      monitor = [ ",preferred,auto,1" ];
+      monitor = lib.optionals isLaptop [ "eDP-1,preferred,0x0,1" ]
+        ++ [ ",preferred,auto-up,1" ];
+
+      workspace = lib.optionals isLaptop
+        (map (n: "${toString n}, monitor:eDP-1") (lib.range 1 10));
 
       exec-once = [
         "test -x $HOME/Code/src/github.com/peteyycz/scripts/@peteyycz:dev-start.sh && $HOME/Code/src/github.com/peteyycz/scripts/@peteyycz:dev-start.sh"
@@ -117,7 +189,7 @@ in
 
       general = {
         gaps_in = 8;
-        gaps_out = "0,12,12,12";
+        gaps_out = 12;
         border_size = 0;
         "col.active_border" = "rgb(${c colors.bgHard})";
         "col.inactive_border" = "rgb(${c colors.bg})";
@@ -242,6 +314,8 @@ in
         "$mod SHIFT, 9, movetoworkspace, 9"
         "$mod SHIFT, 0, movetoworkspace, 10"
 
+        "$mod SHIFT, M, movecurrentworkspacetomonitor, +1"
+
         "$mod, B, togglesplit"
         "$mod, V, togglesplit"
         "$mod, C, exec, caldy toggle"
@@ -307,23 +381,10 @@ in
       "theme.bar.buttons.modules.ram.spacing" = "0.9em";
       "theme.bar.buttons.modules.dotfiles.spacing" = "0";
 
-      bar.layouts."0" = {
-        left = [ "dashboard" "workspaces" "windowtitle" "media" ];
-        middle = [ "clock" ];
-        right = [
-          "custom/recording"
-          "custom/todos"
-          "volume"
-          "bluetooth"
-          "network"
-        ] ++ lib.optionals isLaptop [
-          "battery"
-        ] ++ [
-          "kbinput"
-          "custom/dotfiles"
-          "notifications"
-        ];
-      };
+      bar.layouts =
+        if primaryMonitors == [ ]
+        then { "0" = barLayout; }
+        else lib.genAttrs primaryMonitors (_: barLayout);
 
       bar.workspaces.showWsIcons = true;
       bar.workspaces.showApplicationIcons = true;
@@ -342,6 +403,20 @@ in
     } (lib.optionalAttrs isLaptop {
       bar.battery.label = true;
     } // (import ./hyprpanel-theme.nix { inherit colors; }));
+  };
+
+  systemd.user.services.hyprpanel-primary-bar = lib.mkIf (primaryMonitors != [ ]) {
+    Unit = {
+      Description = "Show Hyprpanel bar only on the primary monitor";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+    Service = {
+      ExecStart = "${hyprpanelPrimaryBar}/bin/hyprpanel-primary-bar ${lib.escapeShellArgs primaryMonitors}";
+      Restart = "on-failure";
+      RestartSec = 2;
+    };
   };
 
   };

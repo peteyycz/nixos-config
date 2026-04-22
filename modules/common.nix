@@ -93,6 +93,10 @@ in
 
   programs.nix-ld.enable = true;
   programs.fish.enable = true;
+
+  systemd.tmpfiles.rules = [
+    "L+ /bin/bash - - - - ${pkgs.bash}/bin/bash"
+  ];
   users.users.peteyycz = {
     isNormalUser = true;
     extraGroups = [ "wheel" "docker" "networkmanager" ];

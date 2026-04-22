@@ -35,10 +35,10 @@ let
       socket="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
 
       apply() {
-        local monitors name w h pw ph scale pos
+        local monitors name w h pw ph current scale pos
         monitors=$(hyprctl monitors -j 2>/dev/null) || return 0
 
-        while IFS=$'\t' read -r name w h pw ph; do
+        while IFS=$'\t' read -r name w h pw ph current; do
           case "$name" in
             eDP-1)
               scale="1.0"
@@ -63,8 +63,12 @@ let
               ;;
           esac
 
+          if awk -v a="$current" -v b="$scale" 'BEGIN { exit !(sqrt((a-b)^2) < 0.01) }'; then
+            continue
+          fi
+
           hyprctl keyword monitor "$name,preferred,$pos,$scale" >/dev/null
-        done < <(jq -r '.[] | "\(.name)\t\(.width)\t\(.height)\t\(.physicalWidth)\t\(.physicalHeight)"' <<<"$monitors")
+        done < <(jq -r '.[] | "\(.name)\t\(.width)\t\(.height)\t\(.physicalWidth)\t\(.physicalHeight)\t\(.scale)"' <<<"$monitors")
       }
 
       for _ in $(seq 1 60); do

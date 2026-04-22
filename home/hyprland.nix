@@ -26,6 +26,65 @@ let
     ];
   };
 
+  hyprAutoScale = pkgs.writeShellApplication {
+    name = "hypr-auto-scale";
+    runtimeInputs = with pkgs; [ jq socat hyprland coreutils gawk ];
+    text = ''
+      set -uo pipefail
+
+      socket="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+
+      apply() {
+        local monitors name w h pw ph scale pos
+        monitors=$(hyprctl monitors -j 2>/dev/null) || return 0
+
+        while IFS=$'\t' read -r name w h pw ph; do
+          case "$name" in
+            eDP-1)
+              scale="1.0"
+              pos="0x0"
+              ;;
+            *)
+              if [[ "$pw" -gt 0 && "$ph" -gt 0 ]]; then
+                scale=$(awk -v w="$w" -v h="$h" -v pw="$pw" -v ph="$ph" 'BEGIN {
+                  diag_px = sqrt(w*w + h*h);
+                  diag_in = sqrt(pw*pw + ph*ph) / 25.4;
+                  dpi = diag_px / diag_in;
+                  if (dpi < 110) print "1.0";
+                  else if (dpi < 130) print "1.25";
+                  else if (dpi < 170) print "1.5";
+                  else if (dpi < 200) print "1.75";
+                  else print "2.0";
+                }')
+              else
+                scale="1.0"
+              fi
+              pos="auto-up"
+              ;;
+          esac
+
+          hyprctl keyword monitor "$name,preferred,$pos,$scale" >/dev/null
+        done < <(jq -r '.[] | "\(.name)\t\(.width)\t\(.height)\t\(.physicalWidth)\t\(.physicalHeight)"' <<<"$monitors")
+      }
+
+      for _ in $(seq 1 60); do
+        hyprctl monitors >/dev/null 2>&1 && break
+        sleep 0.5
+      done
+
+      apply
+
+      socat -U - UNIX-CONNECT:"$socket" | while IFS= read -r line; do
+        case "$line" in
+          monitoradded*|monitorremoved*|configreloaded*)
+            sleep 0.4
+            apply
+            ;;
+        esac
+      done
+    '';
+  };
+
   hyprpanelPrimaryBar = pkgs.writeShellApplication {
     name = "hyprpanel-primary-bar";
     runtimeInputs = with pkgs; [ jq socat hyprland hyprpanel coreutils ];
@@ -403,6 +462,20 @@ in
     } (lib.optionalAttrs isLaptop {
       bar.battery.label = true;
     } // (import ./hyprpanel-theme.nix { inherit colors; }));
+  };
+
+  systemd.user.services.hypr-auto-scale = {
+    Unit = {
+      Description = "Auto-scale Hyprland monitors based on DPI";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+    Service = {
+      ExecStart = "${hyprAutoScale}/bin/hypr-auto-scale";
+      Restart = "on-failure";
+      RestartSec = 2;
+    };
   };
 
   systemd.user.services.hyprpanel-primary-bar = lib.mkIf (primaryMonitors != [ ]) {

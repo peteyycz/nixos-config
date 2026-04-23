@@ -61,9 +61,16 @@ in
     enable = true;
     wlr.enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config.hyprland = {
-      default = lib.mkForce [ "hyprland" "gtk" ];
-      "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
+    config = {
+      common = {
+        default = "gtk";
+        "org.freedesktop.impl.portal.Screenshot" = "wlr";
+        "org.freedesktop.impl.portal.ScreenCast" = "wlr";
+      };
+      hyprland = {
+        default = lib.mkForce [ "hyprland" "gtk" ];
+        "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
+      };
     };
   };
 

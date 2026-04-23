@@ -9,6 +9,8 @@ in
     ./common-apps.nix
     ./hyprland.nix
     ./notes.nix
+    ./git.nix
+    ./claude-code.nix
   ];
 
   home.stateVersion = "25.05";

@@ -69,7 +69,7 @@
           primaryMonitors = [ "DP-1" "DP-2" "DP-3" "HDMI-A-1" "eDP-1" ];
         };
         homepc = mkHost "homepc" {
-          primaryMonitors = [ "DP-1" "HDMI-A-1" ];
+          primaryMonitors = [ "DP-1" "DP-2" "DP-3" "HDMI-A-1" ];
         };
       };
     };

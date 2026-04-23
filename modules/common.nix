@@ -137,6 +137,9 @@ in
     openssl
     tree-sitter
     pam_u2f
+    jdk21
+    maven
+    python3
   ]);
 
   programs._1password.enable = true;
